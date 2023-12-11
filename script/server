@@ -1,0 +1,31 @@
+#!/usr/bin/env perl
+
+use lib 'local/lib/perl5';
+use lib 'lib-base';
+use lib 'lib';
+
+use Getopt::Long;
+use Server;
+use DI;
+
+use header;
+
+my $port;
+my $module;
+
+GetOptions(
+	'port|p=i', \$port,
+	'module|m=s', \$module,
+);
+
+die 'requires port number' unless defined $port;
+die 'requires module name or number' unless defined $module;
+
+DI->get('log')->set_filename('logs/server.log');
+
+my $server = Server->new(
+	port => $port,
+	module => $module,
+);
+$server->start;
+

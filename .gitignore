@@ -1,0 +1,7 @@
+.carmel
+local
+logs/*
+!logs/.gitkeep
+.env
+.tidyall.d
+

@@ -1,0 +1,10 @@
+[PerlTidy]
+select = **/*.{pl,pm,t}
+ignore = {local,lib-base}/**/*.{pl,pm,t}
+argv = -pro=./.perltidyrc --character-encoding=none
+only_modes = lint
+
+[PerlCritic]
+select = {lib}/**/*.{pl,pm}
+only_modes = critic
+
