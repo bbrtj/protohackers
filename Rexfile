@@ -32,7 +32,7 @@ task deploy => sub {
 		exclude => [qw(.* local logs Rexfile*)]
 	};
 
-	file "$build_dir/logs", ensure => 'directory';
+	file "$build_dir/current/logs", ensure => 'directory';
 
 	symlink("$build_dir/.env", "$build_dir/current/.env");
 

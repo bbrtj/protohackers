@@ -1,6 +1,7 @@
 package Server;
 
-use Mojo::IOLoop;
+use Mojo::IOLoop::Server;
+use My::Mojo::IOLoop::Stream;
 use Server::Session;
 use all 'Server::Module';
 
@@ -46,26 +47,30 @@ sub connection ($self, $stream)
 sub start ($self)
 {
 	$self->log->set_system_name($self->module->name);
-	$self->log->debug('starting server...');
+	my $server = Mojo::IOLoop::Server->new(reuse => 1);
 
 	foreach my $sig (qw(INT TERM)) {
 		## no critic
 		$SIG{$sig} = sub {
-			Mojo::IOLoop->stop;
+			$server->reactor->stop if $server->reactor->is_running;
 		};
 	}
 
-	Mojo::IOLoop->server(
-		{
-			port => $self->port,
-			reuse => 1,
-		} => sub ($, $stream, $) {
+	$server->on(
+		accept => sub ($server, $handle) {
+			my $stream = My::Mojo::IOLoop::Stream->new($handle);
 			$self->connection($stream);
+			$stream->start;
 		}
 	);
 
-	Mojo::IOLoop->start;
+	$self->log->debug('starting server...');
+	$server->listen(port => $self->port);
+	$server->start;
+	$server->reactor->start unless $server->reactor->is_running;
+
 	$self->log->debug('stopping server...');
+	$server->stop;
 
 	return;
 }

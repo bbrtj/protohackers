@@ -31,3 +31,8 @@ sub process_message
 	...;
 }
 
+sub handle_eof ($self, $session)
+{
+	$session->close_gracefully;
+}
+

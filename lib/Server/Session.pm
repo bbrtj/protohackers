@@ -13,6 +13,9 @@ has param 'server' => (
 has param 'stream' => (
 	handles => [
 		'write',
+		'on',
+		'close',
+		'close_gracefully',
 	],
 );
 
@@ -29,6 +32,14 @@ with qw(
 	Role::HasId
 );
 
+sub _dropped ($self)
+{
+	$self->log->debug('Dropped connection #' . $self->id);
+	$self->on_dropped->();
+
+	return;
+}
+
 sub BUILD ($self, $)
 {
 	$self->log->debug('New TCP connection #' . $self->id . ' from ' . $self->stream->handle->peerhost);
@@ -37,17 +48,10 @@ sub BUILD ($self, $)
 	# react to tcp events
 	my $stream = $self->stream;
 	$stream->on(read => sub ($, $bytes) { $module->process_message($self, $bytes) });
-	$stream->on(close => sub { $self->dropped });
+	$stream->on(eof => sub ($) { $module->handle_eof($self) });
+	$stream->on(close => sub { $self->_dropped });
 	$stream->on(error => sub ($, $err) { $self->log->error("TCP Error: $err") });
 	$stream->timeout($module->timeout);
-
-	return;
-}
-
-sub dropped ($self)
-{
-	$self->log->debug('Dropped connection #' . $self->id);
-	$self->on_dropped->();
 
 	return;
 }
