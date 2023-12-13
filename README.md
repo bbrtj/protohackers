@@ -1,7 +1,22 @@
 Protohackers Perl solution system
 ----------
 
-Rex deployment
+Development dependencies:
+- Rex
+- Yath
+- Code::TidyAll
+- Perl::Tidy
+- Perl::Critic
+
+## Rex deployment
 
 command: `rex -u USER -H HOST deploy`
+
+## Testing
+
+command: `./test`
+
+## Running
+
+command: `script/server --port=PORT --module=NAME_OR_NUMBER`
 
