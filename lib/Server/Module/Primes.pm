@@ -72,7 +72,7 @@ sub process_message ($self, $session, $message)
 	$session->session_data->{buffer} .= $message;
 }
 
-sub handle_eof ($self, $session)
+sub disconnected ($self, $session)
 {
 	$self->send($session, $self->generate_error($session))
 		if length $session->session_data->{buffer};

@@ -13,7 +13,6 @@ has param 'server' => (
 has param 'stream' => (
 	handles => [
 		'write',
-		'on',
 		'close',
 		'close_gracefully',
 	],
@@ -48,7 +47,7 @@ sub BUILD ($self, $)
 	# react to tcp events
 	my $stream = $self->stream;
 	$stream->on(read => sub ($, $bytes) { $module->process_message($self, $bytes) });
-	$stream->on(eof => sub ($) { $module->handle_eof($self) });
+	$stream->on(eof => sub ($) { $module->disconnected($self) });
 	$stream->on(close => sub { $self->_dropped });
 	$stream->on(error => sub ($, $err) { $self->log->error("TCP Error: $err") });
 	$module->connected($self);
