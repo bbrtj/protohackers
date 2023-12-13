@@ -22,7 +22,7 @@ task deploy => sub {
 
 	for ("$build_dir/current") {
 		if (is_dir $_) {
-			cp $_, "$build_dir/previous";
+			mv $_, "$build_dir/previous";
 		}
 	}
 
