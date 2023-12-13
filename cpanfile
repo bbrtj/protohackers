@@ -13,6 +13,9 @@ on runtime => sub {
 	requires 'Beam::Wire';
 	requires 'Data::ULID::XS';
 	requires 'all';
+
+	requires 'Form::Tiny';
+	requires 'Math::Prime::Util';
 };
 
 # vim: ft=perl

@@ -51,7 +51,7 @@ sub BUILD ($self, $)
 	$stream->on(eof => sub ($) { $module->handle_eof($self) });
 	$stream->on(close => sub { $self->_dropped });
 	$stream->on(error => sub ($, $err) { $self->log->error("TCP Error: $err") });
-	$stream->timeout($module->timeout);
+	$module->connected($self);
 
 	return;
 }

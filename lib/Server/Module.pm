@@ -9,6 +9,7 @@ sub problem_module ($wanted)
 	my $base = __PACKAGE__;
 	my %map = (
 		0 => 'Echo',
+		1 => 'Primes',
 	);
 
 	my $module = $map{$wanted} // ucfirst lc $wanted;
@@ -16,14 +17,16 @@ sub problem_module ($wanted)
 	return "${base}::${module}";
 }
 
-sub name
+sub name ($self)
 {
-	...;
+	$self = ref $self || $self;
+	$self =~ m/([^:]+)$/;
+	return $1;
 }
 
-sub timeout
+sub connected ($self, $session)
 {
-	10;
+	# to be overriden in children
 }
 
 sub process_message
