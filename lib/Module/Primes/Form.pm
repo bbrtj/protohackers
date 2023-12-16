@@ -1,4 +1,4 @@
-package Server::Module::Primes::Form;
+package Module::Primes::Form;
 
 use Form::Tiny -nomoo;
 use Mojo::JSON qw(from_json);

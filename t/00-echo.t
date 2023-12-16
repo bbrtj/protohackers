@@ -2,10 +2,10 @@ use v5.38;
 
 use Test2::V0;
 use SessionMock;
-use Server::Module::Echo;
+use Module::Echo;
 
 my $session = SessionMock->new;
-my $module = Server::Module::Echo->new;
+my $module = Module::Echo->new;
 
 $module->connected($session);
 $module->process_message($session, 'hello');

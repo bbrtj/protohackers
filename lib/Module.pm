@@ -1,4 +1,4 @@
-package Server::Module;
+package Module;
 
 use class;
 

@@ -1,8 +1,8 @@
-package Server::Module::Echo;
+package Module::Echo;
 
 use class;
 
-extends 'Server::Module';
+extends 'Module';
 
 sub process_message ($self, $session, $message)
 {

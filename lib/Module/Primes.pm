@@ -1,13 +1,13 @@
-package Server::Module::Primes;
+package Module::Primes;
 
 use builtin qw(is_bool);
-use Server::Module::Primes::Form;
+use Module::Primes::Form;
 use Math::Prime::Util qw(is_prime);
 use Mojo::JSON qw(to_json);
 
 use class;
 
-extends 'Server::Module';
+extends 'Module';
 
 use constant TERMINATOR => chr(10);
 
@@ -24,7 +24,7 @@ sub generate_error ($self, $session)
 
 sub generate_response ($self, $session, $message)
 {
-	state $form = Server::Module::Primes::Form->new;
+	state $form = Module::Primes::Form->new;
 	$form->set_input($message);
 
 	if ($form->valid) {

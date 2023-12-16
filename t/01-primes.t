@@ -2,11 +2,11 @@ use v5.38;
 
 use Test2::V0;
 use SessionMock;
-use Server::Module::Primes;
+use Module::Primes;
 use Mojo::JSON qw(to_json);
 
 my $session = SessionMock->new;
-my $module = Server::Module::Primes->new;
+my $module = Module::Primes->new;
 
 my %m = (method => 'isPrime');
 

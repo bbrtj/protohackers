@@ -3,7 +3,7 @@ package Server;
 use Mojo::IOLoop::Server;
 use My::Mojo::IOLoop::Stream;
 use Server::Session;
-use all 'Server::Module';
+use all 'Module';
 
 use class;
 
@@ -14,10 +14,10 @@ has param 'port' => (
 );
 
 has param 'module' => (
-	coerce => (InstanceOf ['Server::Module'])
+	coerce => (InstanceOf ['Module'])
 		->plus_coercions(
 			[
-				Str, q{ Server::Module::problem_module($_)->new }
+				Str, q{ Module::problem_module($_)->new }
 			]
 		),
 );
