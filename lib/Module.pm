@@ -27,6 +27,7 @@ sub name ($self)
 sub connected ($self, $session)
 {
 	# to be overriden in children
+	return;
 }
 
 sub process_message
@@ -37,5 +38,6 @@ sub process_message
 sub disconnected ($self, $session)
 {
 	$session->close_gracefully;
+	return;
 }
 

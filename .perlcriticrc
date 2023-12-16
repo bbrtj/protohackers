@@ -6,8 +6,8 @@ theme = community + bugs + security + performance + tests
 exclude = Subroutines::ProhibitSubroutinePrototypes Subroutines::ProhibitNestedSubs Modules::RequireEndWithOne ValuesAndExpressions::ProhibitConstantPragma Modules::ProhibitAutomaticExportation Modules::RequireExplicitPackage Subroutines::ProhibitExplicitReturnUndef TestingAndDebugging::RequireUseStrict TestingAndDebugging::RequireUseWarnings
 
 [Community::Prototypes]
-signature_enablers = header testheader v5.38
+signature_enablers = header class v5.38
 
 [Community::StrictWarnings]
-extra_importers = header testheader v5.38
+extra_importers = header class v5.38
 

@@ -44,14 +44,17 @@ sub generate_response ($self, $session, $message)
 	return undef;
 }
 
-sub send ($self, $session, $message)
+## no critic Subroutines::ProhibitBuiltinHomonyms
+sub write ($self, $session, $message)
 {
 	$session->write($message . TERMINATOR);
+	return;
 }
 
 sub connected ($self, $session)
 {
 	$session->data->{buffer} = '';
+	return;
 }
 
 sub process_message ($self, $session, $message)
@@ -61,22 +64,24 @@ sub process_message ($self, $session, $message)
 	while ($message =~ s/\A(.+?)@{[TERMINATOR]}//) {
 		my $response = $self->generate_response($session, $1);
 		if (!defined $response) {
-			$self->send($session, $self->generate_error($session));
+			$self->write($session, $self->generate_error($session));
 			$session->close_gracefully;
 			last;
 		}
 
-		$self->send($session, $response);
+		$self->write($session, $response);
 	}
 
 	$session->data->{buffer} .= $message;
+	return;
 }
 
 sub disconnected ($self, $session)
 {
-	$self->send($session, $self->generate_error($session))
+	$self->write($session, $self->generate_error($session))
 		if length $session->data->{buffer};
 
 	$session->close_gracefully;
+	return;
 }
 
