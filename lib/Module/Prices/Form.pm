@@ -1,7 +1,6 @@
 package Module::Prices::Form;
 
 use Form::Tiny -nomoo;
-use Module::Prices::Util;
 
 use class;
 
@@ -17,19 +16,17 @@ form_field 'type' => (
 );
 
 form_field 'value1' => (
-	type => PositiveOrZeroInt,
+	type => Int,
 	required => 1,
-	adjust => sub { Module::Prices::Util->unsigned_to_signed(pop) },
 );
 
 form_field 'value2' => (
-	type => PositiveOrZeroInt,
+	type => Int,
 	required => 1,
-	adjust => sub { Module::Prices::Util->unsigned_to_signed(pop) },
 );
 
 form_hook reformat => sub ($self, $query) {
-	my ($type, $int1, $int2) = unpack 'ANN', $query;
+	my ($type, $int1, $int2) = unpack 'AN!N!', $query;
 
 	return {
 		type => $type,

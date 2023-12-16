@@ -3,15 +3,14 @@ use v5.38;
 use Test2::V0;
 use TestUtil;
 use Module::Prices;
-use Module::Prices::Util;
 
 subtest 'should handle empty requests' => sub {
 	my @to_send = (
-		pack('ANN', 'Q', 100, 200),
+		pack('AN!N!', 'Q', 100, 200),
 	);
 
 	my @to_receive = (
-		pack('N', 0),
+		pack('N!', 0),
 	);
 
 	TestUtil->test_module_io(
@@ -45,15 +44,15 @@ subtest 'should handle example' => sub {
 
 subtest 'should handle negative integers' => sub {
 	my @to_send = (
-		pack('ANN', 'I', 100, Module::Prices::Util->signed_to_unsigned(-50)),
-		pack('ANN', 'I', 200, Module::Prices::Util->signed_to_unsigned(-80)),
-		pack('ANN', 'I', 300, Module::Prices::Util->signed_to_unsigned(100)),
-		pack('ANN', 'I', 400, Module::Prices::Util->signed_to_unsigned(-2)),
-		pack('ANN', 'Q', 0, 1000),
+		pack('AN!N!', 'I', 100, -50),
+		pack('AN!N!', 'I', 200, -80),
+		pack('AN!N!', 'I', 300, 100),
+		pack('AN!N!', 'I', 400, -2),
+		pack('AN!N!', 'Q', 0, 1000),
 	);
 
 	my @to_receive = (
-		pack('N', Module::Prices::Util->signed_to_unsigned(-8)),
+		pack('N!', -8),
 	);
 
 	TestUtil->test_module_io(
@@ -66,14 +65,14 @@ subtest 'should handle negative integers' => sub {
 
 subtest 'should handle big integers' => sub {
 	my @to_send = (
-		pack('ANN', 'I', 100, 2050000000),
-		pack('ANN', 'I', 200, 2050000000),
-		pack('ANN', 'I', Module::Prices::Util->signed_to_unsigned(-2099999999), 2050000000),
-		pack('ANN', 'Q', Module::Prices::Util->signed_to_unsigned(-2100000000), 2100000000),
+		pack('AN!N!', 'I', 100, 2050000000),
+		pack('AN!N!', 'I', 200, 2050000000),
+		pack('AN!N!', 'I', -2099999999, 2050000000),
+		pack('AN!N!', 'Q', -2100000000, 2100000000),
 	);
 
 	my @to_receive = (
-		pack('N', 2050000000),
+		pack('N!', 2050000000),
 	);
 
 	TestUtil->test_module_io(
