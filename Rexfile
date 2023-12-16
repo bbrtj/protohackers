@@ -5,7 +5,18 @@ use Env::Dot;
 use lib 'lib-base';
 use My::Rex::Command::Sync;
 
-desc 'Deploy';
+task 'Deploy just the libs';
+task deploy_libs => sub {
+	my $cwd = path->to_abs;
+	my $build_dir = $ENV{DEPLOY_DIRECTORY} // '~/protohackers';
+
+	say "Deploying $cwd";
+	sync_up "$cwd/lib/", "$build_dir/current/lib", {
+		exclude => [qw()]
+	};
+};
+
+desc 'Deploy the entire thing';
 task deploy => sub {
 	my $cwd = path->to_abs;
 	my $build_dir = $ENV{DEPLOY_DIRECTORY} // '~/protohackers';
@@ -43,4 +54,6 @@ task deploy => sub {
 	say 'Installing modules';
 	run "source $perlbrew/etc/bashrc && perlbrew use $perl && cd $build_dir/current && carmel install && carmel rollout";
 };
+
+# vim: ft=perl
 
