@@ -1,7 +1,7 @@
 use v5.38;
 
 use Test2::V0;
-use SessionMock;
+use TestUtil;
 use Module::Primes;
 use Mojo::JSON qw(to_json);
 
@@ -10,22 +10,28 @@ my $module = Module::Primes->new;
 
 my %m = (method => 'isPrime');
 
-$module->connected($session);
-$module->process_message($session, to_json({%m, number => 13}) . "\n");
-$module->process_message($session, to_json({%m, number => 153}) . "\n");
-$module->process_message($session, 'hi?' . "\n");
-$module->process_message($session, '{{{');
+my @to_send = (
+	to_json({%m, number => 13}) . "\n",
+	to_json({%m, number => 153}) . "\n",
+	'hi?' . "\n",
+	'{{{',
+);
 
-ok $session->_closed, 'session is closed';
-$module->disconnected($session);
-
-is $session->_written, [
+my @to_receive = (
 	to_json({%m, prime => \1}) . "\n",
 	to_json({%m, prime => \0}) . "\n",
 	to_json({error => \1}) . "\n",
 	to_json({error => \1}) . "\n",
-	],
-	'data is ok';
+);
+
+TestUtil->test_module_io(
+	'Module::Primes',
+	\@to_send,
+	\@to_receive,
+	before_disconnected => sub ($module, $session) {
+		ok $session->_closed, 'session is closed before client disconnects';
+	},
+);
 
 done_testing;
 

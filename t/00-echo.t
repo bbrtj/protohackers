@@ -1,19 +1,12 @@
 use v5.38;
 
 use Test2::V0;
-use SessionMock;
+use TestUtil;
 use Module::Echo;
 
-my $session = SessionMock->new;
-my $module = Module::Echo->new;
-
-$module->connected($session);
-$module->process_message($session, 'hello');
-$module->process_message($session, 'world');
-$module->disconnected($session);
-
-is $session->_written, ['hello', 'world'], 'data is ok';
-ok $session->_closed, 'session is closed';
+my @to_send = qw(hello world);
+my @to_receive = @to_send;
+TestUtil->test_module_io('Module::Echo', \@to_send, \@to_receive);
 
 done_testing;
 
