@@ -22,7 +22,7 @@ has param 'on_dropped' => (
 	isa => CodeRef,
 );
 
-has field 'session_data' => (
+has field 'data' => (
 	isa => HashRef,
 	default => sub { {} },
 );

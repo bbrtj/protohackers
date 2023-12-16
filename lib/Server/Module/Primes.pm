@@ -51,12 +51,12 @@ sub send ($self, $session, $message)
 
 sub connected ($self, $session)
 {
-	$session->session_data->{buffer} = '';
+	$session->data->{buffer} = '';
 }
 
 sub process_message ($self, $session, $message)
 {
-	$message = $session->session_data->{buffer} . $message;
+	$message = $session->data->{buffer} . $message;
 
 	while ($message =~ s/\A(.+?)@{[TERMINATOR]}//) {
 		my $response = $self->generate_response($session, $1);
@@ -69,13 +69,13 @@ sub process_message ($self, $session, $message)
 		$self->send($session, $response);
 	}
 
-	$session->session_data->{buffer} .= $message;
+	$session->data->{buffer} .= $message;
 }
 
 sub disconnected ($self, $session)
 {
 	$self->send($session, $self->generate_error($session))
-		if length $session->session_data->{buffer};
+		if length $session->data->{buffer};
 
 	$session->close_gracefully;
 }

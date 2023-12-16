@@ -24,7 +24,8 @@ is $session->_written, [
 	to_json({%m, prime => \0}) . "\n",
 	to_json({error => \1}) . "\n",
 	to_json({error => \1}) . "\n",
-], 'data is ok';
+	],
+	'data is ok';
 
 done_testing;
 

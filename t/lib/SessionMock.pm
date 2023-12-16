@@ -2,7 +2,7 @@ package SessionMock;
 
 use class;
 
-has field 'session_data' => (
+has field 'data' => (
 	isa => HashRef,
 	default => sub { {} },
 );
