@@ -12,6 +12,7 @@ sub problem_module ($wanted)
 		1 => 'Primes',
 		2 => 'Prices',
 		3 => 'Chat',
+		4 => 'Database',
 	);
 
 	my $module = $map{$wanted} // ucfirst lc $wanted;
@@ -24,6 +25,11 @@ sub name ($self)
 	$self = ref $self || $self;
 	$self =~ m/([^:]+)$/;
 	return $1;
+}
+
+sub protocol ($class)
+{
+	return 'tcp';
 }
 
 sub session_class ($class)
