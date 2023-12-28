@@ -10,6 +10,8 @@ sub problem_module ($wanted)
 	my %map = (
 		0 => 'Echo',
 		1 => 'Primes',
+		2 => 'Prices',
+		3 => 'Chat',
 	);
 
 	my $module = $map{$wanted} // ucfirst lc $wanted;
@@ -22,6 +24,11 @@ sub name ($self)
 	$self = ref $self || $self;
 	$self =~ m/([^:]+)$/;
 	return $1;
+}
+
+sub session_class ($class)
+{
+	return 'Server::Session';
 }
 
 sub connected ($self, $session)

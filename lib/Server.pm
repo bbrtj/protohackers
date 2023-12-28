@@ -30,7 +30,7 @@ has field 'connections' => (
 sub connection ($self, $stream)
 {
 	my $id;
-	my $connection = Server::Session->new(
+	my $connection = $self->module->session_class->new(
 		server => $self,
 		stream => $stream,
 		on_dropped => sub {
@@ -59,8 +59,8 @@ sub start ($self)
 	$server->on(
 		accept => sub ($server, $handle) {
 			my $stream = My::Mojo::IOLoop::Stream->new($handle);
-			$self->connection($stream);
 			$stream->start;
+			$self->connection($stream);
 		}
 	);
 

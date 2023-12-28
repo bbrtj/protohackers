@@ -2,6 +2,11 @@ package SessionMock;
 
 use class;
 
+my $last_id = 0;
+has field 'id' => (
+	default => sub { ++$last_id },
+);
+
 has field 'data' => (
 	isa => HashRef,
 	default => sub { {} },
@@ -13,7 +18,8 @@ has field '_closed' => (
 );
 
 has field '_written' => (
-	default => sub { [] },
+	lazy => sub { [] },
+	clearer => 1,
 );
 
 sub close ($self)
