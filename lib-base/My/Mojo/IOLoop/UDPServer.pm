@@ -3,8 +3,6 @@ use Mojo::Base 'Mojo::EventEmitter';
 
 use Carp qw(croak);
 use IO::Socket::INET;
-use Mojo::File qw(path);
-use Socket qw(IPPROTO_TCP TCP_NODELAY);
 
 has reactor => sub { Mojo::IOLoop->singleton->reactor }, weak => 1;
 
@@ -34,13 +32,15 @@ sub start {
 sub _accept {
 	my ($self) = @_;
 
-	$self->{handle}->recv(my $buffer, 10000);
+	$self->{handle}->recv(my $buffer, 131072);
 	$self->emit(message => $buffer);
 }
 
 sub write {
 	my ($self, $data) = @_;
-	$self->{handle}->send($data, length $data);
+	if (length $data) {
+		$self->{handle}->send($data, 131072);
+	}
 	return;
 }
 

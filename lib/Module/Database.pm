@@ -32,12 +32,11 @@ sub store ($self, $key, $value)
 
 sub retrieve ($self, $key)
 {
-	return $self->constant_storage->{$key} // $self->storage->{$key};
+	return "$key=" . ($self->constant_storage->{$key} // $self->storage->{$key} // '');
 }
 
 sub process_message ($self, $server, $message)
 {
-	chomp $message;
 	my @parts = split /=/, $message, 2;
 	if (@parts == 2) {
 		$self->store(@parts);
