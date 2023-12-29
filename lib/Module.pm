@@ -13,9 +13,10 @@ sub problem_module ($wanted)
 		2 => 'Prices',
 		3 => 'Chat',
 		4 => 'Database',
+		5 => 'ChatProxy',
 	);
 
-	my $module = $map{$wanted} // ucfirst lc $wanted;
+	my $module = $map{$wanted} // ucfirst $wanted;
 
 	return "${base}::${module}";
 }
