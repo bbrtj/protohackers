@@ -2,7 +2,7 @@ package My::Mojo::IOLoop::UDPServer;
 use Mojo::Base 'Mojo::EventEmitter';
 
 use Carp qw(croak);
-use IO::Socket::INET;
+use IO::Socket::IP;
 
 has reactor => sub { Mojo::IOLoop->singleton->reactor }, weak => 1;
 
@@ -12,7 +12,6 @@ sub listen {
 	my $address = $args->{address} || '0.0.0.0';
 	my $port = $args->{port};
 
-	# Reuse file descriptor
 	my %options;
 	$options{Proto} = 'udp';
 	$options{LocalAddr} = $address;
@@ -29,6 +28,12 @@ sub start {
 	$self->reactor->io($self->{handle} => sub { $self->_accept })->watch($self->{handle}, 1, 0);
 }
 
+sub stop {
+	my ($self) = @_;
+
+	$self->reactor->remove($self->{handle});
+}
+
 sub _accept {
 	my ($self) = @_;
 
@@ -38,16 +43,11 @@ sub _accept {
 
 sub write {
 	my ($self, $data) = @_;
+
 	if (length $data) {
 		$self->{handle}->send($data, 131072);
 	}
 	return;
-}
-
-sub stop {
-	my ($self) = @_;
-
-	$self->reactor->remove($self->{handle});
 }
 
 1;
