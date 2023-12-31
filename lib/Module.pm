@@ -4,6 +4,11 @@ use class;
 
 has injected 'log';
 
+has field 'server' => (
+	writer => -hidden,
+	weak_ref => 1,
+);
+
 sub problem_module ($wanted)
 {
 	my $base = __PACKAGE__;
@@ -14,6 +19,7 @@ sub problem_module ($wanted)
 		3 => 'Chat',
 		4 => 'Database',
 		5 => 'ChatProxy',
+		6 => 'Tickets',
 	);
 
 	my $module = $map{$wanted} // ucfirst $wanted;

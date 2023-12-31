@@ -16,6 +16,7 @@ on runtime => sub {
 
 	requires 'Form::Tiny';
 	requires 'Math::Prime::Util';
+	requires 'List::BinarySearch';
 };
 
 # vim: ft=perl

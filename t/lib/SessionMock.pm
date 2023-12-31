@@ -22,6 +22,10 @@ has field '_written' => (
 	clearer => 1,
 );
 
+has 'timeout' => (
+	is => 'rw',
+);
+
 sub close ($self)
 {
 	$self->_set_closed(!!1);

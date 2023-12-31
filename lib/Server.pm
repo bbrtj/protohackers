@@ -28,6 +28,15 @@ has field 'connections' => (
 	default => sub { {} },
 );
 
+has field 'loop' => (
+	default => sub { Mojo::IOLoop->singleton },
+);
+
+sub BUILD ($self, $args)
+{
+	$self->module->_set_server($self);
+}
+
 sub connection ($self, $stream)
 {
 	my $id;

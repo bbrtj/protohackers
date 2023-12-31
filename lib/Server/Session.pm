@@ -15,6 +15,7 @@ has param 'stream' => (
 		'write',
 		'close',
 		'close_gracefully',
+		'timeout',
 	],
 );
 
