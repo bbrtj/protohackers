@@ -3,6 +3,7 @@ Protohackers Perl solution system
 
 Development dependencies:
 - Rex
+- Rex::Commands::PerlSync
 - Yath
 - Code::TidyAll
 - Perl::Tidy

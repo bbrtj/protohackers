@@ -1,9 +1,7 @@
 use Rex -feature => [qw(1.4 exec_autodie)];
 use Mojo::File qw(path);
 use Env::Dot;
-
-use lib 'lib-base';
-use My::Rex::Command::Sync;
+use Rex::Commands::PerlSync;
 
 task 'Deploy just the libs';
 task deploy_libs => sub {
