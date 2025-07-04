@@ -1,6 +1,8 @@
 package UDPServerMock;
 
-use class;
+use v5.42;
+
+use Mooish::Base;
 
 has field '_written' => (
 	lazy => sub { [] },

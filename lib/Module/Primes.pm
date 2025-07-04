@@ -1,11 +1,14 @@
 package Module::Primes;
 
+use v5.42;
+
 use builtin qw(is_bool);
 use Module::Primes::Form;
 use Math::Prime::Util qw(is_prime);
 use Mojo::JSON qw(to_json);
 
-use class;
+use Mooish::Base;
+no warnings 'experimental::builtin'; # is_bool
 
 extends 'Module';
 

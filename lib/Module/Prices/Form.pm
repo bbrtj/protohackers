@@ -1,8 +1,10 @@
 package Module::Prices::Form;
 
+use v5.42;
+
 use Form::Tiny -nomoo;
 
-use class;
+use Mooish::Base;
 
 use constant SUPPORTED_TYPES => {
 	'I' => 'insert',

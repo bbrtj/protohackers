@@ -1,9 +1,11 @@
 package Module::Prices;
 
+use v5.42;
+
 use Module::Prices::Form;
 use List::Util qw(sum);
 
-use class;
+use Mooish::Base;
 
 extends 'Module';
 

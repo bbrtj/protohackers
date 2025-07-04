@@ -3,7 +3,7 @@ package TestUtil;
 use SessionMock;
 use Test2::V0;
 
-use header;
+use v5.42;
 
 sub test_module_io ($class, $module_class, $to_send, $to_receive, %options)
 {

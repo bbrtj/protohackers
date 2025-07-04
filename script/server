@@ -1,14 +1,13 @@
 #!/usr/bin/env perl
 
 use lib 'local/lib/perl5';
-use lib 'lib-base';
 use lib 'lib';
 
 use Getopt::Long;
 use Server;
 use DI;
 
-use header;
+use v5.42;
 
 my $port;
 my $module;

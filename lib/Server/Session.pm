@@ -1,6 +1,8 @@
 package Server::Session;
 
-use class;
+use v5.42;
+
+use Mooish::Base;
 
 has param 'server' => (
 	isa => InstanceOf ['Server'],

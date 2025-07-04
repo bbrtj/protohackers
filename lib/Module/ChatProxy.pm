@@ -1,9 +1,10 @@
 package Module::ChatProxy;
 
-use builtin qw(trim);
+use v5.42;
+
 use Mojo::IOLoop;
 
-use class;
+use Mooish::Base;
 
 extends 'Module';
 

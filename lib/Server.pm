@@ -1,14 +1,19 @@
 package Server;
 
+use v5.42;
+
 use Mojo::IOLoop::Server;
 use My::Mojo::IOLoop::UDPServer;
 use My::Mojo::IOLoop::Stream;
 use Server::Session;
+use DI;
 use all 'Module';
 
-use class;
+use Mooish::Base;
 
-has injected 'log';
+has field 'log' => (
+	DI->injected('log')
+);
 
 has param 'port' => (
 	isa => PositiveInt,

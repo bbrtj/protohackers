@@ -1,11 +1,15 @@
 package Module::Primes::Form;
 
+use v5.42;
+
 use Form::Tiny -nomoo;
 use Mojo::JSON qw(from_json);
-use builtin qw(created_as_number);
 use Math::BigInt;
+use List::Util qw(any);
+use builtin qw(created_as_number);
 
-use class;
+use Mooish::Base;
+no warnings 'experimental::builtin'; # created_as_number
 
 has field 'bigint' => (
 	isa => Bool,

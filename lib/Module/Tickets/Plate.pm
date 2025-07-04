@@ -1,10 +1,11 @@
 package Module::Tickets::Plate;
 
+use v5.42;
+
 use List::BinarySearch qw(binsearch_pos);
 use List::Util qw(min);
-use builtin qw(indexed);
 
-use class;
+use Mooish::Base;
 
 has param 'id' => (
 	isa => Str,

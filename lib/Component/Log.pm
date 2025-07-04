@@ -1,9 +1,11 @@
 package Component::Log;
 
+use v5.42;
+
 use Log::Dispatch;
 use Time::Piece;
 
-use class;
+use Mooish::Base;
 
 with 'Component::Role::HasEnv';
 

@@ -1,6 +1,8 @@
 package X;
 
-use class;
+use v5.42;
+
+use Mooish::Base;
 
 use overload
 	'""' => 'stringify',

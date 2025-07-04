@@ -1,10 +1,10 @@
 package Module::Tickets;
 
+use v5.42;
+
 use Module::Tickets::System;
 
-use builtin qw(weaken);
-
-use class;
+use Mooish::Base;
 
 extends 'Module';
 

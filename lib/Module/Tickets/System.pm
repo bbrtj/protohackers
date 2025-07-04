@@ -1,10 +1,12 @@
 package Module::Tickets::System;
 
+use v5.42;
+
 use Module::Tickets::Camera;
 use Module::Tickets::Dispatcher;
 use Module::Tickets::Plate;
 
-use class;
+use Mooish::Base;
 
 has field 'cameras' => (
 	isa => HashRef [InstanceOf ['Module::Tickets::Camera']],

@@ -1,8 +1,13 @@
 package Module;
 
-use class;
+use v5.42;
 
-has injected 'log';
+use DI;
+use Mooish::Base;
+
+has field 'log' => (
+	DI->injected('log')
+);
 
 has field 'server' => (
 	writer => -hidden,

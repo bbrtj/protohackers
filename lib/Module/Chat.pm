@@ -1,8 +1,8 @@
 package Module::Chat;
 
-use builtin qw(trim);
+use v5.42;
 
-use class;
+use Mooish::Base;
 
 extends 'Module';
 

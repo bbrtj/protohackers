@@ -46,7 +46,7 @@ task deploy => sub {
 	symlink("$build_dir/.env", "$build_dir/current/.env");
 
 	my $perlbrew = $ENV{DEPLOY_PERLBREW} // '~/perl5/perlbrew';
-	my $perl = $ENV{DEPLOY_PERL} // 'perl-5.38.0';
+	my $perl = $ENV{DEPLOY_PERL} // 'perl-5.42.0';
 	my $ubic = $ENV{DEPLOY_UBIC} // 'protohackers';
 
 	say 'Installing modules';

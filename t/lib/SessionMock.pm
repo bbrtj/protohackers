@@ -1,6 +1,8 @@
 package SessionMock;
 
-use class;
+use v5.42;
+
+use Mooish::Base;
 
 my $last_id = 0;
 has field 'id' => (

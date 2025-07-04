@@ -1,6 +1,8 @@
 package Module::Echo;
 
-use class;
+use v5.42;
+
+use Mooish::Base;
 
 extends 'Module';
 

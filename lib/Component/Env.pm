@@ -1,8 +1,10 @@
 package Component::Env;
 
+use v5.42;
+
 use Env::Dot;
 
-use class;
+use Mooish::Base;
 
 # adjust any envvars here
 my %defaults = (

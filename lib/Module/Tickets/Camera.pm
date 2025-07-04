@@ -1,6 +1,8 @@
 package Module::Tickets::Camera;
 
-use class;
+use v5.42;
+
+use Mooish::Base;
 
 has param 'road_id' => (
 	isa => PositiveOrZeroInt,

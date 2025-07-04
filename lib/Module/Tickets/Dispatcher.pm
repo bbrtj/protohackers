@@ -1,6 +1,9 @@
 package Module::Tickets::Dispatcher;
 
-use class;
+use v5.42;
+
+use List::Util qw(any);
+use Mooish::Base;
 
 has param 'roads' => (
 	isa => ArrayRef [PositiveOrZeroInt],
