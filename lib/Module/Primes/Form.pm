@@ -9,7 +9,7 @@ use List::Util qw(any);
 use builtin qw(created_as_number);
 
 use Mooish::Base;
-no warnings 'experimental::builtin'; # created_as_number
+no warnings 'experimental::builtin';    # created_as_number
 
 has field 'bigint' => (
 	isa => Bool,

@@ -6,7 +6,8 @@ use IO::Socket::IP;
 
 has reactor => sub { Mojo::IOLoop->singleton->reactor }, weak => 1;
 
-sub listen {
+sub listen
+{
 	my ($self, $args) = (shift, ref $_[0] ? $_[0] : {@_});
 
 	my $address = $args->{address} || '0.0.0.0';
@@ -22,26 +23,30 @@ sub listen {
 	@$self{qw(args handle)} = ($args, $handle);
 }
 
-sub start {
+sub start
+{
 	my ($self) = @_;
 
 	$self->reactor->io($self->{handle} => sub { $self->_accept })->watch($self->{handle}, 1, 0);
 }
 
-sub stop {
+sub stop
+{
 	my ($self) = @_;
 
 	$self->reactor->remove($self->{handle});
 }
 
-sub _accept {
+sub _accept
+{
 	my ($self) = @_;
 
 	$self->{handle}->recv(my $buffer, 131072);
 	$self->emit(message => $buffer);
 }
 
-sub write {
+sub write
+{
 	my ($self, $data) = @_;
 
 	if (length $data) {

@@ -8,7 +8,7 @@ use Math::Prime::Util qw(is_prime);
 use Mojo::JSON qw(to_json);
 
 use Mooish::Base;
-no warnings 'experimental::builtin'; # is_bool
+no warnings 'experimental::builtin';    # is_bool
 
 extends 'Module';
 

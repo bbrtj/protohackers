@@ -4,14 +4,16 @@ use Mojo::Base 'Mojo::IOLoop::Stream';
 use Errno qw(EAGAIN ECONNRESET EINTR EWOULDBLOCK);
 has read_eof => 0;
 
-sub eof {
+sub eof
+{
 	my $self = shift;
 
 	$self->read_eof(1);
 	$self->emit('eof');
 }
 
-sub _read {
+sub _read
+{
 	my $self = shift;
 
 	return $self if $self->read_eof;
