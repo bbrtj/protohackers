@@ -3,7 +3,7 @@ use Mojo::File qw(path);
 use Env::Dot;
 use Rex::Commands::PerlSync;
 
-task 'Deploy just the libs';
+desc 'Deploy just the libs';
 task deploy_libs => sub {
 	my $cwd = path->to_abs;
 	my $build_dir = $ENV{DEPLOY_DIRECTORY} // '~/protohackers';
