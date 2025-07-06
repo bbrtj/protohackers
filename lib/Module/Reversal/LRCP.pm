@@ -9,7 +9,7 @@ use List::Util qw(min);
 
 use Mooish::Base;
 
-use constant PROTOCOL_RETRANSMISSION => 3;
+use constant PROTOCOL_RETRANSMISSION => 1;
 use constant PROTOCOL_DISCONNECTION => 60;
 use constant PROTOCOL_SEP => '/';
 use constant PROTOCOL_ESC => '\\';
@@ -76,7 +76,9 @@ sub validate_message_close ($self, @parts)
 
 sub handle_message_close ($self, $server, $id)
 {
-	$self->sessions->{$id}->end_session;
+	my $session = $self->sessions->{$id};
+	$session->end_session if $session;
+
 	delete $self->sessions->{$id};
 	$server->write($self->&make('close', $id));
 }
