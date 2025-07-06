@@ -24,7 +24,8 @@ is $server->_written, [
 	'/ack/123/18/',
 	"/data/123/0/!dlrow \\\\\\/olleh\n/",
 	'/close/123/',
-], 'messages ok';
+	],
+	'messages ok';
 
 note Dumper($server->_written);
 

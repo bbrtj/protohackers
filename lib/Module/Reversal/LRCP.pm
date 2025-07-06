@@ -9,12 +9,14 @@ use List::Util qw(min);
 
 use Mooish::Base;
 
+use constant PROTOCOL_RETRANSMISSION => 3;
+use constant PROTOCOL_DISCONNECTION => 60;
 use constant PROTOCOL_SEP => '/';
 use constant PROTOCOL_ESC => '\\';
 use constant PROTOCOL_ESC_MAGIC => "\x00\x21\x37\x00";
 use constant PROTOCOL_MAX_MESSAGE_LENGTH => 1000 - 1;
 use constant LRCPLength => StrLength [0, PROTOCOL_MAX_MESSAGE_LENGTH];
-use constant LRCPNumber => IntRange[0, 2147483648 - 1];
+use constant LRCPNumber => IntRange [0, 2147483648 - 1];
 
 has field 'log' => (
 	DI->injected('log')
@@ -40,9 +42,14 @@ my sub make ($self, @parts)
 
 my sub make_data ($self, $id, $offset, $up_to, $data)
 {
-	state $max_len = int(PROTOCOL_MAX_MESSAGE_LENGTH / 2);
+	state $step = int(PROTOCOL_MAX_MESSAGE_LENGTH / 10);
 
-	return $self->&make('data', $id, $offset, substr $data, $offset, min $max_len, $up_to - $offset);
+	for (my $max_len = PROTOCOL_MAX_MESSAGE_LENGTH - $step ; $max_len > $step ; $max_len -= $step) {
+		my $out = $self->&make('data', $id, $offset, substr $data, $offset, min $max_len, $up_to - $offset);
+		return $out if LRCPLength->check($out);
+	}
+
+	die 'could not make_data - bad config?';
 }
 
 sub validate_message_connect ($self, @parts)
@@ -51,10 +58,14 @@ sub validate_message_connect ($self, @parts)
 		unless @parts == 1 && LRCPNumber->check($parts[0]);
 }
 
-sub handle_message_connect ($self, $id)
+sub handle_message_connect ($self, $server, $id)
 {
-	my $session = $self->sessions->{$id} //= Module::Reversal::LRCP::Session->new;
-	return $self->&make('ack', $id, $session->data_len);
+	my $session = $self->sessions->{$id} //= Module::Reversal::LRCP::Session->new(
+		server => $server,
+		disconnection_sub => sub { $self->handle_message_close($server, $id) },
+	);
+
+	$session->write($self->&make('ack', $id, $session->data_len));
 }
 
 sub validate_message_close ($self, @parts)
@@ -63,10 +74,11 @@ sub validate_message_close ($self, @parts)
 		unless @parts == 1 && LRCPNumber->check($parts[0]);
 }
 
-sub handle_message_close ($self, $id)
+sub handle_message_close ($self, $server, $id)
 {
+	$self->sessions->{$id}->end_session;
 	delete $self->sessions->{$id};
-	return $self->&make('close', $id);
+	$server->write($self->&make('close', $id));
 }
 
 sub validate_message_data ($self, @parts)
@@ -78,15 +90,17 @@ sub validate_message_data ($self, @parts)
 		&& length $parts[2];
 }
 
-sub handle_message_data ($self, $id, $pos, $data)
+sub handle_message_data ($self, $server, $id, $pos, $data)
 {
 	my $session = $self->sessions->{$id};
 	if (!$session) {
-		return $self->&make('close', $id);
+		$server->write($self->&make('close', $id));
+		return;
 	}
 
+	$self->log->debug(sprintf 'got data of length %s at pos %s from session %s', length $data, $pos, $id);
 	$session->add_data($pos, $data);
-	return $self->&make('ack', $id, $session->data_len);
+	$session->write($self->&make('ack', $id, $session->data_len));
 }
 
 sub validate_message_ack ($self, @parts)
@@ -97,34 +111,40 @@ sub validate_message_ack ($self, @parts)
 		&& LRCPNumber->check($parts[1]);
 }
 
-sub handle_message_ack ($self, $id, $size)
+sub handle_message_ack ($self, $server, $id, $size)
 {
 	my $session = $self->sessions->{$id};
 	if (!$session) {
-		return $self->&make('close', $id);
+		$server->write($self->&make('close', $id));
+		return;
 	}
 
 	# already received
 	if ($session->ack_bytes >= $size) {
-		return ();
+		return;
 	}
 
 	$session->set_ack_bytes($size);
 
 	# peer misbehaving
 	if ($size > $session->sent_bytes) {
-		return $self->handle_message_close($id);
+		$self->handle_message_close($server, $id);
+		return;
 	}
 
-	# send next packet
+	$session->cancel_disconnection;
+
+	# send next packet (and cancel retransmission)
 	if ($size < $session->sent_bytes) {
-		return $self->send_buffer($id);
+		$self->send_buffer($id);
+		return;
 	}
 
-	return ();
+	# all well, cancel retransmission
+	$session->update_retransmission(undef);
 }
 
-sub handle_message ($self, $message)
+sub handle_message ($self, $server, $message)
 {
 	try {
 		Module::Reversal::LRCP::X::IncorrectMessage->throw('bad length')
@@ -155,15 +175,14 @@ sub handle_message ($self, $message)
 
 		$self->$validate_method(@parts)
 			if $validate_method;
-		return $self->$handle_method(@parts);
+		$self->$handle_method($server, @parts);
 	}
 	catch ($e) {
 		die $e
 			unless $e isa 'Module::Reversal::LRCP::X::IncorrectMessage';
 
-		$self->log->debug($e);
 		# ignore incorrect messages
-		return ();
+		$self->log->debug($e);
 	}
 }
 
@@ -176,6 +195,20 @@ sub mark_session_send ($self, $id, $len = undef)
 sub send_buffer ($self, $id)
 {
 	my $session = $self->sessions->{$id};
-	return $self->&make_data($id, $session->ack_bytes, $session->sent_bytes, $session->data);
+
+	# make sure these values won't change in transmission sub
+	my $log = sprintf 'transmitting data of length %s at pos %s to session %s',
+		$session->sent_bytes - $session->ack_bytes, $session->ack_bytes, $id;
+	my $data = $self->&make_data($id, $session->ack_bytes, $session->sent_bytes, $session->data);
+
+	my $transmission = sub {
+		$self->log->debug($log);
+
+		$session->update_retransmission(__SUB__);
+		$session->write($data);
+	};
+
+	$session->update_disconnection;
+	$transmission->();
 }
 

@@ -20,10 +20,6 @@ sub protocol ($class)
 
 sub process_message ($self, $server, $message)
 {
-	my @responses = $self->lrcp->handle_message($message);
-
-	foreach my $response (@responses) {
-		$server->write($response);
-	}
+	$self->lrcp->handle_message($server, $message);
 }
 
