@@ -72,7 +72,7 @@ sub start ($self)
 
 sub start_tcp ($self)
 {
-	my $server = Mojo::IOLoop::Server->new(reuse => 1);
+	my $server = Mojo::IOLoop::Server->new();
 
 	foreach my $sig (qw(INT TERM)) {
 		## no critic
@@ -90,7 +90,7 @@ sub start_tcp ($self)
 	);
 
 	$self->log->debug('starting server...');
-	$server->listen(port => $self->port);
+	$server->listen(port => $self->port, backlog => 1024);
 	$server->start;
 	$server->reactor->start unless $server->reactor->is_running;
 

@@ -8,3 +8,6 @@ log:
             $ref: env
         filename: 'logs/application.log'
 
+numid_gen:
+    class: Component::NumericIdGenerator
+
