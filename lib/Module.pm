@@ -28,6 +28,7 @@ sub problem_module ($wanted)
 		7 => 'Reversal',
 		8 => 'Insecure',
 		9 => 'JobCentre',
+		10 => 'VCS',
 	);
 
 	my $module = $map{$wanted} // ucfirst $wanted;

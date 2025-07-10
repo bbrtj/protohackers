@@ -1,0 +1,69 @@
+#!/usr/bin/env perl
+
+use lib 'local/lib/perl5';
+use lib 'lib';
+
+use Getopt::Long;
+use List::Util qw(any);
+use Mojo::IOLoop;
+use Mojo::IOLoop::Client;
+use My::Mojo::IOLoop::Stream;
+
+use v5.42;
+
+my $host;
+my $port;
+my $protocol;
+
+GetOptions(
+	'host=s', \$host,
+	'port=i', \$port,
+	'protocol=s', \$protocol,
+);
+
+die 'requires host name' unless defined $host;
+die 'requires port number' unless defined $port;
+# die 'protocol: tcp or udp' unless defined $protocol && any { $protocol eq $_ } qw(tcp udp);
+
+my $client = Mojo::IOLoop::Client->new;
+$client->on(connect => sub ($, $handle) {
+	my $stream = My::Mojo::IOLoop::Stream->new($handle);
+	$stream->timeout(300);
+	$stream->start;
+
+	$stream->on(read => sub ($, $bytes) {
+		print "$bytes";
+	});
+
+	$stream->on(eof => sub {
+		say "EOF";
+	});
+
+	$stream->on(close => sub {
+		say "CLOSED";
+	});
+
+	my sub get_data_to_send
+	{
+		my $me = __SUB__;
+
+		return Mojo::IOLoop->subprocess->run_p(sub {
+			chomp (my $data = readline STDIN);
+			$data =~ s{\\x([0-9a-f]{2})}{chr hex $1}eg;
+			$data =~ s{LF}{\n}g;
+			return $data;
+		})->then(sub (@results) {
+			$stream->write(shift @results);
+			$me->();
+		});
+	}
+
+	get_data_to_send;
+});
+
+$client->connect(address => $host, port => $port);
+
+say "enter data whenever ready, send with enter, \\x10 or LF for a line feed";
+$|++;
+Mojo::IOLoop->start;
+
